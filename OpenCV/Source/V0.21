@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <iostream>
+#include<opencv2/opencv.hpp>
+
+
+static void onMouse(int event, int x, int y, int, void* imgptr) {
+
+	using namespace cv;
+
+	if (event != 1) { // draw only on left mouse click
+		return;
+	}
+
+	Mat& img = (*(Mat*)imgptr); // cast first and dereference
+	Point pt1 = Point(x, y);
+
+	circle(img, pt1, 1, Scalar(0, 255, 0), 30, 8, 0); //RGB 0 255 0 = GREEN
+	
+	std::cout << "X: " << x << " Y: " << y << std::endl;
+
+	imshow("Point Selection", img);
+	waitKey(1);
+}
+
+int main()
+{
+	cv::Mat img_object;
+	img_object = cv::imread("image.png"); // Open Image
+
+	if (img_object.empty()) {
+		std::cout << "Error: Image Not Found!" << std::endl << std::endl;
+		cv::waitKey(0);
+	}
+
+	cv::namedWindow("Point Selection", CV_WINDOW_AUTOSIZE); // Fixed size window matching resolution of image
+	//cv::namedWindow("Display Window", CV_WINDOW_NORMAL); // Allows of resizing of window
+
+	setMouseCallback("Point Selection", onMouse, &img_object); // pass ptr to mat here
+	cv::imshow("Point Selection", img_object);
+
+	cv::waitKey(0); // Hold windows open until user presses a key
+}
